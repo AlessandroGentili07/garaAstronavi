@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 
 public class Giudice {
     private boolean garaInCorso = false;
-    private List<Astronave> classifica = new ArrayList<>();
-    private Percorso percorso;
-    private GestoreFile gestoreFile;
+    private final List<Astronave> classifica = new ArrayList<>();
+    private final Percorso percorso;
+    private final GestoreFile gestoreFile;
+    private int totalePartecipanti = 0;
 
     public Giudice(Percorso percorso) {
-        this.percorso = percorso;
+        this.percorso = Objects.requireNonNull(percorso, "percorso non può essere null");
         this.gestoreFile = new GestoreFile();
     }
 
@@ -18,6 +21,7 @@ public class Giudice {
             return;
         }
         garaInCorso = true;
+        this.totalePartecipanti = partecipanti == null ? 0 : partecipanti.size();
         System.out.println("\n--- IL GIUDICE HA DATO IL VIA ALLA GARA SUL PERCORSO: " + percorso.getNomePercorso() + " ---");
 
         for (Astronave a : partecipanti) {
@@ -33,11 +37,17 @@ public class Giudice {
         System.out.println("  [Avanzamento] " + a.getNome() + ": Percorsi " + a.getDistanzaPercorsa() + "/" + percorso.getLunghezzaTotale());
 
         if (a.getDistanzaPercorsa() >= percorso.getLunghezzaTotale()) {
-            garaInCorso = false;
-            classifica.add(a);
+            // Evita doppio inserimento se la stessa astronave notificasse più volte
+            if (!classifica.contains(a)) {
+                classifica.add(a);
+                System.out.println("\n*** ASTRONAVE " + a.getNome() + " HA RAGGIUNTO IL TRAGUARDO! ***");
+            }
 
-            System.out.println("\n*** ASTRONAVE " + a.getNome() + " HA RAGGIUNTO IL TRAGUARDO! ***");
-            terminaGara();
+            // Se tutti i partecipanti sono arrivati, termina la gara e stampa la classifica
+            if (classifica.size() >= totalePartecipanti && totalePartecipanti > 0) {
+                garaInCorso = false;
+                terminaGara();
+            }
         }
     }
 
@@ -56,5 +66,10 @@ public class Giudice {
 
     public boolean isGaraInCorso() {
         return garaInCorso;
+    }
+
+    @Override
+    public String toString() {
+        return "Giudice{" + "garaInCorso=" + garaInCorso + ", percorso=" + percorso + '}';
     }
 }

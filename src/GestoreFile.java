@@ -2,6 +2,8 @@ import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
+
 
 public class GestoreFile {
     private static final String DIRECTORY_CLASSIFICHE = "classifiche";
@@ -15,11 +17,14 @@ public class GestoreFile {
         }
     }
 
+
     public boolean salvaClassifica(List<Astronave> classifica, Percorso percorso) {
         if (classifica == null || classifica.isEmpty()) {
             System.err.println("Errore: Classifica vuota, impossibile salvare.");
             return false;
         }
+
+        Objects.requireNonNull(percorso, "percorso non può essere null");
 
         String timestamp = LocalDateTime.now().format(FORMATO_DATA);
         String nomeFile = DIRECTORY_CLASSIFICHE + "/classifica_" +
@@ -62,7 +67,11 @@ public class GestoreFile {
         }
     }
 
+
     public boolean salvaLogDettagliato(List<String> eventi, Percorso percorso) {
+        Objects.requireNonNull(eventi, "eventi non può essere null");
+        Objects.requireNonNull(percorso, "percorso non può essere null");
+
         String timestamp = LocalDateTime.now().format(FORMATO_DATA);
         String nomeFile = DIRECTORY_CLASSIFICHE + "/log_" +
                 percorso.getNomePercorso().replaceAll(" ", "_") +
