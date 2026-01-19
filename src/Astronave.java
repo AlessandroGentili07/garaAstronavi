@@ -1,4 +1,6 @@
 import java.util.Random;
+import java.util.Objects;
+
 
 public class Astronave implements Runnable {
     private final String nome;
@@ -9,15 +11,14 @@ public class Astronave implements Runnable {
     private final Random random = new Random();
 
     public Astronave(String nome, int velocitaBase, Percorso percorso, Giudice giudice) {
-        this.nome = nome;
+        this.nome = Objects.requireNonNull(nome, "nome non può essere null");
         this.velocitaBase = velocitaBase;
-        this.percorso = percorso;
-        this.giudice = giudice;
+        this.percorso = Objects.requireNonNull(percorso, "percorso non può essere null");
+        this.giudice = Objects.requireNonNull(giudice, "giudice non può essere null");
     }
 
     @Override
     public void run() {
-        System.out.println(nome + " si prepara per la partenza (Velocità: " + velocitaBase + "m/s).");
 
         while (distanzaPercorsa < percorso.getLunghezzaTotale() && giudice.isGaraInCorso()) {
             try {
@@ -48,5 +49,10 @@ public class Astronave implements Runnable {
 
     public String getNome() {
         return nome;
+    }
+
+    @Override
+    public String toString() {
+        return "Astronave{" + "nome='" + nome + '\'' + ", velocitaBase=" + velocitaBase + ", distanzaPercorsa=" + distanzaPercorsa + '}';
     }
 }
